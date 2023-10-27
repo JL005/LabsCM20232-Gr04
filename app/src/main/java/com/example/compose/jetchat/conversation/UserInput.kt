@@ -58,6 +58,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AlternateEmail
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Duo
 import androidx.compose.material.icons.outlined.InsertPhoto
 import androidx.compose.material.icons.outlined.Mood
@@ -94,6 +95,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
@@ -114,6 +116,8 @@ import kotlin.math.absoluteValue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
+import com.example.compose.jetchat.intents.openCamera
+import com.example.compose.jetchat.intents.openGalleryToViewRecentPhotos
 
 enum class InputSelector {
     NONE,
@@ -216,6 +220,7 @@ private fun SelectorExpanded(
     onCloseRequested: () -> Unit,
     onTextAdded: (String) -> Unit
 ) {
+    val context = LocalContext.current
     if (currentSelector == InputSelector.NONE) return
 
     // Request focus to force the TextField to lose it
@@ -231,9 +236,9 @@ private fun SelectorExpanded(
         when (currentSelector) {
             InputSelector.EMOJI -> EmojiSelector(onTextAdded, focusRequester)
             InputSelector.DM -> NotAvailablePopup(onCloseRequested)
-            InputSelector.PICTURE -> FunctionalityNotAvailablePanel()
+            InputSelector.PICTURE -> openGalleryToViewRecentPhotos(context)
             InputSelector.MAP -> FunctionalityNotAvailablePanel()
-            InputSelector.PHONE -> FunctionalityNotAvailablePanel()
+            InputSelector.PHONE -> openCamera(context)
             else -> {
                 throw NotImplementedError()
             }
@@ -310,7 +315,7 @@ private fun UserInputSelector(
         )
         InputSelectorButton(
             onClick = { onSelectorChange(InputSelector.PHONE) },
-            icon = Icons.Outlined.Duo,
+            icon = Icons.Outlined.CameraAlt,
             selected = currentInputSelector == InputSelector.PHONE,
             description = stringResource(id = R.string.videochat_desc)
         )

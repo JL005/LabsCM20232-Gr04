@@ -16,7 +16,9 @@
 
 package com.example.compose.jetchat
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.compose.jetchat.components.JetchatDrawer
 import com.example.compose.jetchat.databinding.ContentMainBinding
+import com.example.compose.jetchat.services.NotificationService
 import kotlinx.coroutines.launch
 
 /**
@@ -109,6 +113,11 @@ class NavActivity : AppCompatActivity() {
         return findNavController().navigateUp() || super.onSupportNavigateUp()
     }
 
+    override fun onPause() {
+        super.onPause()
+        val serviceIntent = Intent(this, NotificationService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
+    }
     /**
      * See https://issuetracker.google.com/142847973
      */

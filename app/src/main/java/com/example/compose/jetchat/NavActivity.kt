@@ -113,8 +113,8 @@ class NavActivity : AppCompatActivity() {
         return findNavController().navigateUp() || super.onSupportNavigateUp()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         val serviceIntent = Intent(this, NotificationService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
     }

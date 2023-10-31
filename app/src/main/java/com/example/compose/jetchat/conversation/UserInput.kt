@@ -16,6 +16,7 @@
 
 package com.example.compose.jetchat.conversation
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -118,6 +119,10 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import com.example.compose.jetchat.intents.openCamera
 import com.example.compose.jetchat.intents.openGalleryToViewRecentPhotos
+import com.example.compose.jetchat.services.ChatMessageSaveService
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 enum class InputSelector {
     NONE,
@@ -189,7 +194,8 @@ fun UserInput(
                     resetScroll()
                     dismissKeyboard()
                 },
-                currentInputSelector = currentInputSelector
+                currentInputSelector = currentInputSelector,
+                textMessage = textState.text
             )
             SelectorExpanded(
                 onCloseRequested = dismissKeyboard,
@@ -279,9 +285,11 @@ private fun UserInputSelector(
     onSelectorChange: (InputSelector) -> Unit,
     sendMessageEnabled: Boolean,
     onMessageSent: () -> Unit,
+    textMessage: String,
     currentInputSelector: InputSelector,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .height(72.dp)
@@ -341,7 +349,14 @@ private fun UserInputSelector(
         Button(
             modifier = Modifier.height(36.dp),
             enabled = sendMessageEnabled,
-            onClick = onMessageSent,
+            onClick = { onMessageSent()
+                val intent = Intent(context, ChatMessageSaveService::class.java)
+                intent.putExtra("file_name", SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(
+                    Date()
+                ))
+                intent.putExtra("file_content", textMessage)
+                context.startService(intent)
+                      },
             colors = buttonColors,
             border = border,
             contentPadding = PaddingValues(0.dp)

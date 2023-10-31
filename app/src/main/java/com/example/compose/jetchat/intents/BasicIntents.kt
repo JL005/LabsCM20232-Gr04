@@ -29,6 +29,7 @@ fun openCamera(context: Context) {
             )
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             (context as Activity).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+
         }
     }
 }
@@ -36,11 +37,12 @@ fun openCamera(context: Context) {
 
 private fun createImageFile(): File {
     val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val storageDir: File? = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    val storageDir: File? =
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
     if (storageDir != null && !storageDir.exists()) {
         storageDir.mkdirs()
     }
-    return File(storageDir,"JPEG_${timeStamp}_.jpg")
+    return File(storageDir, "JPEG_${timeStamp}_.jpg")
 }
 
 fun openGalleryToViewRecentPhotos(context: Context) {
